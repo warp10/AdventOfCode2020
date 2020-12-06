@@ -30,6 +30,8 @@ def main(filename, starting_position=4, rows_to_skip=0):
 
 
 if __name__ == '__main__':
+    # I know it's useless to parse the file 5 times, but I just copy-pasted the
+    # code from puzzle 1
     print(
         main('input.txt', 2, 0) *
         main('input.txt', 4, 0) *
