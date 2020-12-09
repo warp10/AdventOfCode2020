@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
 
-from itertools import permutations
-
-
 def main(filename, preamble_length):
     with open(filename) as f:
         numbers = [int(number.strip()) for number in f.readlines()]
         preamble_end = preamble_length
         for number in numbers[preamble_end:]:
             preamble = numbers[preamble_end-preamble_length:preamble_end]
-            if number not in [sum(item) for item in permutations(preamble, 2)]:
+            if not any([number - preamble_number in preamble for preamble_number in preamble]):
                 return number
             preamble_end += 1
 
