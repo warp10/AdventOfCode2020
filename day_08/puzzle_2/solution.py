@@ -11,7 +11,7 @@ class GameBoy():
             'jmp': self.jmp,
             'nop': self.nop
         }
-        self.program = program  # Raw program as read from filw
+        self.program = program  # Raw program as read from file
         self.code = []  # Each line of program is converted into a tuple (ops, arg)
         self.patch_pointer = 0  # This is a pointer to the last patched op
         self.load_program()
@@ -45,35 +45,34 @@ class GameBoy():
         """
         return self.ip in self.recorded_ips
 
-    def reset_and_patch_program(self):
+    def reset_program(self):
         """
-        Reset all registries (except for patch_counter), reloads and patch the program
+        Reset all registries (except for patch_counter) and reloads the program
         """
         self.accumulator = 0
         self.ip = 0
         self.recorded_ips = []
         self.code = []
         self.load_program()
-        self.patch_code()
 
     def patch_code(self):
-        # This is really ugly :()
+        # This is way more convoluted than it should be
         for line in self.code[self.patch_pointer:]:
             if line[0] in ('nop, jmp'):
                 pos = self.code.index(line, self.patch_pointer)
+                new_op = 'jmp' if self.code[pos][0] == 'nop' else 'nop'
+                self.code[pos] = (new_op, self.code[pos][1])
                 self.patch_pointer = pos + 1
-                newop = 'jmp' if self.code[pos][0] == 'nop' else 'nop'
-                self.code[pos] = (newop, self.code[pos][1])
                 return
 
     def run_program(self):
-        self.patch_code()
         while self.ip < len(self.code):
             op, arg = self.code[self.ip]
             self.record_ip()
             self.ops[op](arg)
             if self.is_infinite_loop():
-                self.reset_and_patch_program()
+                self.reset_program()
+                self.patch_code()
 
         return self.accumulator
 
