@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# This is way more code than needed
 
 def couple_joltages(joltages_list):
     i = 0
